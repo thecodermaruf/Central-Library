@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Central Public Library</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="src/custom.css">
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Sample data
+        const featuredBooks = [
+            { id: 1, title: "The Great Gatsby", author: "F. Scott Fitzgerald", category: "Classic", available: true },
+            { id: 2, title: "To Kill a Mockingbird", author: "Harper Lee", category: "Fiction", available: true },
+            { id: 3, title: "1984", author: "George Orwell", category: "Dystopian", available: false },
+            { id: 4, title: "Pride and Prejudice", author: "Jane Austen", category: "Romance", available: true },
+            { id: 5, title: "The Catcher in the Rye", author: "J.D. Salinger", category: "Fiction", available: true },
+            { id: 6, title: "Lord of the Flies", author: "William Golding", category: "Classic", available: false }
+        ];
+
+        const events = [
+            { id: 1, title: "Book Club Meeting", date: "Dec 15, 2024", time: "6:00 PM" },
+            { id: 2, title: "Children's Story Time", date: "Dec 18, 2024", time: "10:00 AM" },
+            { id: 3, title: "Author Reading", date: "Dec 22, 2024", time: "7:00 PM" }
+        ];
+
+        // Header Component
+        const Header = ({ activeSection, setActiveSection }) => {
+            const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+            return (
+                <header className="bg-white shadow-lg sticky top-0 z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between items-center py-4">
+                            <div className="flex items-center">
+                                <div className="text-2xl font-bold text-gray-800">
+                                    📚 Central Library
+                                </div>
+                            </div>
+
+                            {/* Desktop Navigation */}
+                            <nav className="hidden md:flex space-x-8">
+                                {['Home', 'Catalog', 'Events', 'Services', 'Contact'].map((item) => (
+                                    <button
+                                        key={item}
+                                        onClick={() => setActiveSection(item.toLowerCase())}
+                                        className={`nav-link font-medium ${activeSection === item.toLowerCase()
+                                            ? 'text-purple-600 border-b-2 border-purple-600'
+                                            : 'text-gray-700'
+                                            }`}
+                                    >
+                                        {item}
+                                    </button>
+                                ))}
+                            </nav>
+
+                            {/* Mobile menu button */}
+                            <button
+                                className="md:hidden p-2"
+                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            >
+                                <div className="w-6 h-6 flex flex-col justify-center">
+                                    <span className="block w-full h-0.5 bg-gray-600 mb-1"></span>
+                                    <span className="block w-full h-0.5 bg-gray-600 mb-1"></span>
+                                    <span className="block w-full h-0.5 bg-gray-600"></span>
+                                </div>
+                            </button>
+                        </div>
+
+                        {/* Mobile Navigation */}
+                        {isMobileMenuOpen && (
+                            <nav className="md:hidden pb-4">
+                                {['Home', 'Catalog', 'Events', 'Services', 'Contact'].map((item) => (
+                                    <button
+                                        key={item}
+                                        onClick={() => {
+                                            setActiveSection(item.toLowerCase());
+                                            setIsMobileMenuOpen(false);
+                                        }}
+                                        className={`block w-full text-left py-2 px-4 ${activeSection === item.toLowerCase()
+                                            ? 'text-purple-600 bg-purple-50'
+                                            : 'text-gray-700'
+                                            }`}
+                                    >
+                                        {item}
+                                    </button>
+                                ))}
+                            </nav>
+                        )}
+                    </div>
+                </header>
+            );
+        };
+
+        // Hero Section
+        const HeroSection = () => (
+            <section className="hero-gradient text-white py-16 lg:py-24">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6">
+                        Welcome to Central Library
+                    </h1>
+                    <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
+                        Discover thousands of books, digital resources, and community programs in your local library
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition duration-300">
+                            Browse Catalog
+                        </button>
+                        <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition duration-300">
+                            Get Library Card
+                        </button>
+                    </div>
+                </div>
+            </section>
+        );
+
+        // Featured Books Section
+        const FeaturedBooks = () => (
+            <section className="py-16 bg-gray-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
+                        Featured Books
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {featuredBooks.map((book) => (
+                            <div key={book.id} className="book-card bg-white rounded-lg shadow-md p-6 hover:shadow-xl">
+                                <div className="h-48 bg-gradient-to-br from-purple-400 to-blue-500 rounded-lg mb-4 flex items-center justify-center">
+                                    <span className="text-white text-4xl">📖</span>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-2 text-gray-800">{book.title}</h3>
+                                <p className="text-gray-600 mb-2">by {book.author}</p>
+                                <div className="flex justify-between items-center">
+                                    <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                                        {book.category}
+                                    </span>
+                                    <span className={`px-3 py-1 rounded-full text-sm ${book.available
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-red-100 text-red-800'
+                                        }`}>
+                                        {book.available ? 'Available' : 'Checked Out'}
+                                    </span>
+                                </div>
+                                <button className="w-full mt-4 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition duration-300">
+                                    {book.available ? 'Reserve Book' : 'Join Waitlist'}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+
+        // Services Section
+        const ServicesSection = () => (
+            <section className="py-16 bg-white">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
+                        Library Services
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {[
+                            { icon: '📚', title: 'Book Lending', desc: 'Borrow physical and digital books' },
+                            { icon: '💻', title: 'Computer Access', desc: 'Free internet and computer use' },
+                            { icon: '📖', title: 'Study Spaces', desc: 'Quiet areas for reading and studying' },
+                            { icon: '👥', title: 'Programs', desc: 'Educational and community events' }
+                        ].map((service, index) => (
+                            <div key={index} className="text-center p-6 rounded-lg hover:bg-gray-50 transition duration-300">
+                                <div className="text-4xl mb-4">{service.icon}</div>
+                                <h3 className="text-xl font-semibold mb-2 text-gray-800">{service.title}</h3>
+                                <p className="text-gray-600">{service.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+
+        // Events Section
+        const EventsSection = () => (
+            <section className="py-16 bg-gray-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
+                        Upcoming Events
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {events.map((event) => (
+                            <div key={event.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition duration-300">
+                                <div className="flex items-center mb-4">
+                                    <div className="text-2xl mr-3">📅</div>
+                                    <div>
+                                        <div className="text-sm text-gray-500">{event.date}</div>
+                                        <div className="text-sm text-gray-500">{event.time}</div>
+                                    </div>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-3 text-gray-800">{event.title}</h3>
+                                <button className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition duration-300">
+                                    Register
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        );
+
+        // Footer
+        const Footer = () => (
+            <footer className="bg-gray-800 text-white py-12">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div>
+                            <h3 className="text-xl font-semibold mb-4">Central Library</h3>
+                            <p className="text-gray-300 mb-4">
+                                Your community hub for learning, discovery, and connection.
+                            </p>
+                            <div className="flex space-x-4">
+                                <span className="text-2xl cursor-pointer hover:text-purple-400">📘</span>
+                                <span className="text-2xl cursor-pointer hover:text-purple-400">📧</span>
+                                <span className="text-2xl cursor-pointer hover:text-purple-400">📱</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-semibold mb-4">Quick Links</h3>
+                            <ul className="space-y-2 text-gray-300">
+                                <li><a href="#" className="hover:text-white">Catalog Search</a></li>
+                                <li><a href="#" className="hover:text-white">My Account</a></li>
+                                <li><a href="#" className="hover:text-white">Renew Books</a></li>
+                                <li><a href="#" className="hover:text-white">Library Hours</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-semibold mb-4">Contact Info</h3>
+                            <div className="text-gray-300 space-y-2">
+                                <p>📍 123 Main Street, City, State 12345</p>
+                                <p>📞 (555) 123-4567</p>
+                                <p>✉️ info@centrallibrary.org</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                        <p>&copy; 2024 Central Public Library. All rights reserved.</p>
+                    </div>
+                </div>
+            </footer>
+        );
+
+        // Main App Component
+        const LibraryApp = () => {
+            const [activeSection, setActiveSection] = useState('home');
+
+            return (
+                <div className="min-h-screen bg-white">
+                    <Header activeSection={activeSection} setActiveSection={setActiveSection} />
+
+                    {activeSection === 'home' && (
+                        <>
+                            <HeroSection />
+                            <FeaturedBooks />
+                            <ServicesSection />
+                            <EventsSection />
+                        </>
+                    )}
+
+                    {activeSection === 'catalog' && (
+                        <div className="py-16">
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                <h1 className="text-4xl font-bold text-center mb-8">Library Catalog</h1>
+                                <div className="bg-white rounded-lg shadow-md p-8">
+                                    <div className="mb-6">
+                                        <input
+                                            type="text"
+                                            placeholder="Search books, authors, or subjects..."
+                                            className="w-full p-4 border border-gray-300 rounded-lg text-lg"
+                                        />
+                                    </div>
+                                    <FeaturedBooks />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeSection === 'events' && (
+                        <div className="py-16">
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                <h1 className="text-4xl font-bold text-center mb-8">Library Events</h1>
+                                <EventsSection />
+                            </div>
+                        </div>
+                    )}
+
+                    {activeSection === 'services' && (
+                        <div className="py-16">
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                                <h1 className="text-4xl font-bold text-center mb-8">Our Services</h1>
+                                <ServicesSection />
+                                <div className="mt-16 bg-purple-50 rounded-lg p-8">
+                                    <h2 className="text-2xl font-bold mb-4 text-center">Library Hours</h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+                                        <div>
+                                            <h3 className="font-semibold mb-2">Weekdays</h3>
+                                            <p>Monday - Friday: 9:00 AM - 8:00 PM</p>
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold mb-2">Weekends</h3>
+                                            <p>Saturday: 9:00 AM - 6:00 PM<br />Sunday: 12:00 PM - 5:00 PM</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeSection === 'contact' && (
+                        <div className="py-16">
+                            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                                <h1 className="text-4xl font-bold text-center mb-8">Contact Us</h1>
+                                <div className="bg-white rounded-lg shadow-md p-8">
+                                    <form onSubmit={(e) => {
+                                        e.preventDefault();
+                                        alert('Thank you for your message! We\'ll get back to you soon.');
+                                    }}>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                            <input
+                                                type="text"
+                                                placeholder="Your Name"
+                                                className="p-4 border border-gray-300 rounded-lg"
+                                                required
+                                            />
+                                            <input
+                                                type="email"
+                                                placeholder="Your Email"
+                                                className="p-4 border border-gray-300 rounded-lg"
+                                                required
+                                            />
+                                        </div>
+                                        <input
+                                            type="text"
+                                            placeholder="Subject"
+                                            className="w-full p-4 border border-gray-300 rounded-lg mb-6"
+                                            required
+                                        />
+                                        <textarea
+                                            placeholder="Your Message"
+                                            rows="6"
+                                            className="w-full p-4 border border-gray-300 rounded-lg mb-6"
+                                            required
+                                        ></textarea>
+                                        <button
+                                            type="submit"
+                                            className="w-full bg-purple-600 text-white py-4 rounded-lg font-semibold hover:bg-purple-700 transition duration-300"
+                                        >
+                                            Send Message
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <Footer />
+                </div>
+            );
+        };
+
+        // Render the app
+        ReactDOM.render(<LibraryApp />, document.getElementById('root'));
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9869b17f851e2055',t:'MTc1OTEzMDE2OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

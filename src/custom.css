@@ -1,0 +1,17 @@
+body {
+    box-sizing: border-box;
+}
+
+.hero-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.book-card:hover {
+    transform: translateY(-4px);
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #667eea;
+    transition: color 0.2s ease;
+}
